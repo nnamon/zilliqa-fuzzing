@@ -1,0 +1,49 @@
+FROM ubuntu:18.04
+
+ADD VERSION /
+
+# Install the bare essentials for administration
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y tmux vim htop python python-pip git software-properties-common wget netcat
+
+# Pull the Scilla sources
+RUN git clone https://github.com/Zilliqa/Scilla.git Scilla && cd Scilla && git checkout master
+RUN add-apt-repository -y ppa:avsm/ppa && apt-get update && apt-get install -y curl \
+build-essential m4 ocaml opam pkg-config zlib1g-dev libgmp-dev libffi-dev libssl-dev \
+libboost-system-dev libsecp256k1-dev libpcre3-dev
+RUN cd Scilla && make opamdep && echo ". ~/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true" >> ~/.bashrc
+RUN cd Scilla && eval `opam config env` && make clean && make
+
+# Pull the Zilliqa sources
+ARG FORCE_REBUILD=no
+ARG ZILLIQA_VERSION=v5.0.1
+RUN git clone https://github.com/Zilliqa/Zilliqa.git Zilliqa && cd Zilliqa && git checkout ${ZILLIQA_VERSION}
+RUN apt-get update
+RUN apt-get install -y git libboost-system-dev libboost-filesystem-dev libboost-test-dev \
+libssl-dev libleveldb-dev libjsoncpp-dev libsnappy-dev cmake libmicrohttpd-dev \
+libjsonrpccpp-dev build-essential pkg-config libevent-dev libminiupnpc-dev \
+libprotobuf-dev protobuf-compiler libcurl4-openssl-dev libboost-program-options-dev \
+libssl-dev
+RUN cd Zilliqa && cmake -H. -Bbuild ${CMAKE_EXTRA_OPTIONS} -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+-DCMAKE_INSTALL_PREFIX=.. && cmake --build build -- -j`nproc --all`
+RUN pip install clint requests setuptools futures
+
+# Get the most recent configuration
+ARG FORCE_UPDATE=no
+RUN mkdir config && cd config && wget https://mainnet-join.zilliqa.com/configuration.tar.gz && \
+tar xvfz configuration.tar.gz
+
+# Setup the Zilliqa path
+ENV PATH="${PATH}:${PWD}/Zilliqa/build/bin/:${PWD}/Scilla/bin/"
+
+# Setup the node environment
+RUN mkdir node
+RUN cp config/*.xml node/
+RUN cp config/*.py node/
+RUN sed -i "s/\/scilla/\/Scilla/g"  node/constants.xml
+
+# Make Zilliqa log to stdout
+RUN ln -s /dev/stdout node/zilliqa-00001-log.txt
+
+# Change the working directory to the node directory
+WORKDIR node/
