@@ -44,6 +44,8 @@ cmake .. -GNinja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_B
 ARG ZILLIQA_VERSION=fuzz-v5.0.1
 ARG FORCE_REBUILD=no
 RUN git clone https://github.com/nnamon/Zilliqa.git Zilliqa && cd Zilliqa && git checkout ${ZILLIQA_VERSION}
+ENV CC=/usr/bin/clang
+ENV CXX=/usr/bin/clang++
 RUN cd Zilliqa && cmake -H. -Bbuild ${CMAKE_EXTRA_OPTIONS} -DCMAKE_BUILD_TYPE=RelWithDebInfo \
 -DCMAKE_INSTALL_PREFIX=.. && cmake --build build -- -j`nproc --all`
 RUN pip install clint requests setuptools futures
