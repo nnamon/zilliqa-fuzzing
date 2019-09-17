@@ -2,6 +2,9 @@ FROM ubuntu:18.04
 
 ADD VERSION /
 
+# Use Digital Ocean Mirrors
+RUN sed -i 's/archive.ubuntu.com/mirrors.digitalocean.com/g' /etc/apt/sources.list
+
 # Install the bare essentials for administration
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y tmux vim htop python python-pip git software-properties-common wget netcat
