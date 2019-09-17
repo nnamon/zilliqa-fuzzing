@@ -20,14 +20,14 @@ RUN cd Scilla && eval `opam config env` && make clean && make
 
 # Pull the Zilliqa sources
 ARG FORCE_REBUILD=no
-ARG ZILLIQA_VERSION=v5.0.1
+ARG ZILLIQA_VERSION=fuzz-v5.0.1
 RUN apt-get update
 RUN apt-get install -y git libboost-system-dev libboost-filesystem-dev libboost-test-dev \
 libssl-dev libleveldb-dev libjsoncpp-dev libsnappy-dev cmake libmicrohttpd-dev \
 libjsonrpccpp-dev build-essential pkg-config libevent-dev libminiupnpc-dev \
 libprotobuf-dev protobuf-compiler libcurl4-openssl-dev libboost-program-options-dev \
 libssl-dev
-RUN git clone https://github.com/Zilliqa/Zilliqa.git Zilliqa && cd Zilliqa && git checkout ${ZILLIQA_VERSION}
+RUN git clone https://github.com/nnamon/Zilliqa.git Zilliqa && cd Zilliqa && git checkout ${ZILLIQA_VERSION}
 RUN cd Zilliqa && cmake -H. -Bbuild ${CMAKE_EXTRA_OPTIONS} -DCMAKE_BUILD_TYPE=RelWithDebInfo \
 -DCMAKE_INSTALL_PREFIX=.. && cmake --build build -- -j`nproc --all`
 RUN pip install clint requests setuptools futures
