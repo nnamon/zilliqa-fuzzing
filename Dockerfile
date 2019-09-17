@@ -46,7 +46,7 @@ ARG FORCE_REBUILD=no
 RUN git clone https://github.com/nnamon/Zilliqa.git Zilliqa && cd Zilliqa && git checkout ${ZILLIQA_VERSION}
 ENV CC=/usr/bin/clang
 ENV CXX=/usr/bin/clang++
-RUN cd Zilliqa && cmake -H. -Bbuild ${CMAKE_EXTRA_OPTIONS} -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+RUN cd Zilliqa && cmake -H. -Bbuild ${CMAKE_EXTRA_OPTIONS} -DCMAKE_BUILD_TYPE=Debug \
 -DCMAKE_INSTALL_PREFIX=.. && cmake --build build -- -j`nproc --all`
 RUN pip install clint requests setuptools futures
 
