@@ -38,7 +38,7 @@ ninja-build liblzma-dev libz-dev pkg-config autoconf libtool
 RUN git clone https://github.com/google/libprotobuf-mutator.git libprotobuf-mutator
 RUN cd libprotobuf-mutator && mkdir build && cd build && \
 cmake .. -GNinja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug && \
-RUN ninja && ninja install
+ninja && ninja install
 
 # Pull the Zilliqa sources
 ARG ZILLIQA_VERSION=fuzz-v5.0.1
