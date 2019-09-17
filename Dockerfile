@@ -18,13 +18,20 @@ RUN git clone https://github.com/Zilliqa/Scilla.git Scilla && cd Scilla && git c
 RUN cd Scilla && make opamdep && echo ". ~/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true" >> ~/.bashrc
 RUN cd Scilla && eval `opam config env` && make clean && make
 
-# Pull the Zilliqa sources
+# Install Base Zilliqa dependencies
 RUN apt-get update
 RUN apt-get install -y git libboost-system-dev libboost-filesystem-dev libboost-test-dev \
 libssl-dev libleveldb-dev libjsoncpp-dev libsnappy-dev cmake libmicrohttpd-dev \
 libjsonrpccpp-dev build-essential pkg-config libevent-dev libminiupnpc-dev \
 libprotobuf-dev protobuf-compiler libcurl4-openssl-dev libboost-program-options-dev \
 libssl-dev
+
+# Install libfuzzer
+RUN apt-get install -y clang-8
+ADD ./llvm-update-alternatives.sh .
+RUN sh llvm-update-alternatives.sh
+
+# Pull the Zilliqa sources
 ARG ZILLIQA_VERSION=fuzz-v5.0.1
 ARG FORCE_REBUILD=no
 RUN git clone https://github.com/nnamon/Zilliqa.git Zilliqa && cd Zilliqa && git checkout ${ZILLIQA_VERSION}
