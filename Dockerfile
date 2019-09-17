@@ -13,7 +13,8 @@ RUN apt-get install -y tmux vim htop python python-pip git software-properties-c
 RUN add-apt-repository -y ppa:avsm/ppa && apt-get update && apt-get install -y curl \
 build-essential m4 ocaml opam pkg-config zlib1g-dev libgmp-dev libffi-dev libssl-dev \
 libboost-system-dev libsecp256k1-dev libpcre3-dev
-RUN git clone https://github.com/Zilliqa/Scilla.git Scilla && cd Scilla && git checkout master
+ARG SCILLA_VERSION=v0.4.0
+RUN git clone https://github.com/Zilliqa/Scilla.git Scilla && cd Scilla && git checkout ${SCILLA_VERSION}
 RUN cd Scilla && make opamdep && echo ". ~/.opam/opam-init/init.sh > /dev/null 2> /dev/null || true" >> ~/.bashrc
 RUN cd Scilla && eval `opam config env` && make clean && make
 
