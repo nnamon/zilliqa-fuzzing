@@ -33,7 +33,7 @@ RUN sh llvm-update-alternatives.sh
 
 # Install libprotobuf-mutator
 RUN apt-get update
-RUN apt-get install protobuf-compiler libprotobuf-dev binutils cmake \
+RUN apt-get install -y protobuf-compiler libprotobuf-dev binutils cmake \
 ninja-build liblzma-dev libz-dev pkg-config autoconf libtool
 RUN git clone https://github.com/google/libprotobuf-mutator.git libprotobuf-mutator
 RUN cd libprotobuf-mutator && mkdir build && cd build && \
