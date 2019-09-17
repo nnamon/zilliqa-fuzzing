@@ -31,6 +31,15 @@ RUN apt-get install -y clang-8
 ADD ./llvm-update-alternatives.sh .
 RUN sh llvm-update-alternatives.sh
 
+# Install libprotobuf-mutator
+RUN apt-get update
+RUN apt-get install protobuf-compiler libprotobuf-dev binutils cmake \
+ninja-build liblzma-dev libz-dev pkg-config autoconf libtool
+RUN git clone https://github.com/google/libprotobuf-mutator.git libprotobuf-mutator
+RUN cd libprotobuf-mutator && mkdir build && cd build && \
+cmake .. -GNinja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Debug && \
+RUN ninja && ninja install
+
 # Pull the Zilliqa sources
 ARG ZILLIQA_VERSION=fuzz-v5.0.1
 ARG FORCE_REBUILD=no
@@ -50,7 +59,6 @@ ENV PATH="${PATH}:${PWD}/Zilliqa/build/bin/:${PWD}/Scilla/bin/"
 # Setup the node environment
 RUN mkdir node
 RUN cp config/*.xml node/
-RUN cp config/*.py node/
 RUN sed -i "s/\/scilla/\/Scilla/g"  node/constants.xml
 
 # Make Zilliqa log to stdout
