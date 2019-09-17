@@ -47,7 +47,7 @@ RUN git clone https://github.com/nnamon/Zilliqa.git Zilliqa && cd Zilliqa && git
 ENV CC=/usr/bin/clang
 ENV CXX=/usr/bin/clang++
 RUN cd Zilliqa && cmake -H. -Bbuild ${CMAKE_EXTRA_OPTIONS} -DCMAKE_BUILD_TYPE=Debug \
--DCMAKE_INSTALL_PREFIX=.. && cmake --build build -- -j`nproc --all`
+-DCMAKE_INSTALL_PREFIX=.. -DWARNINGS_AS_ERRORS=OFF && cmake --build build -- -j`nproc --all`
 RUN pip install clint requests setuptools futures
 
 # Get the most recent configuration
